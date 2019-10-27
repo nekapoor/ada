@@ -1,0 +1,1 @@
+This file is here so that the images folder is checked into git

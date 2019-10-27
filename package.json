@@ -14,7 +14,7 @@
     "build": "webpack --config webpack.config.js",
     "compress": "webpack --config webpack.config.js",
     "production": "npm run build && npm run serve",
-    "serve": "FLASK_APP=server/app.py flask run --port=7082",
+    "serve": "FLASK_APP=server/app.py flask run --port=5000",
     "lint-js": "eslint -c './src/config/.eslintrc.js' src/",
     "lint-py": "pylint server/app.py",
     "lint": "npm run lint-js && npm run lint-py",
@@ -22,13 +22,15 @@
     "test": "npm run build && npm run lint && npm run jest && pytest"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",
     "connected-react-router": "^4.2.3",
     "history": "^4.7.2",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.4",
-    "react": "^15.3.2",
-    "react-dom": "^15.3.2",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
+    "react-dropzone": "^10.1.10",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
@@ -66,7 +68,8 @@
     "prop-types": "^15.5.10",
     "react-test-renderer": "^15.2.0",
     "style-loader": "^0.18.2",
-    "webpack-dev-server": "^2.11.1"
+    "webpack-dev-server": "^2.11.1",
+    "yarn-upgrade-all": "^0.5.2"
   },
   "babel": {
     "presets": [
