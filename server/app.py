@@ -6,6 +6,7 @@ from PIL import Image
 import rawpy
 import imageio
 from werkzeug.datastructures import FileStorage
+import numpy
 from helpers import *
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -71,7 +72,46 @@ def upload_file():
 @app.route("/images/roi", methods=["POST"])
 @cross_origin()
 def process_image_rois():
-  return "true"
+
+  req_data = request.get_json()
+  outputs = []
+  filepath = req_data['url']
+  rois = req_data['rois']
+
+  print(rois)
+  print(filepath)
+  raw_basename = os.path.basename(filepath)
+  raw_basename_no_ext = os.path.splitext(raw_basename)[0]
+
+  print(raw_basename_no_ext)
+  raw_filepath = UPLOAD_FOLDER + raw_basename_no_ext + '.dng'
+
+  with rawpy.imread(raw_filepath) as raw:
+    print(raw)
+    for roi in rois:
+      roi_output = process_roi(raw, roi)
+      outputs.append(roi_output)
+  
+  print(outputs)
+  return jsonify({'data':outputs})
+
+def process_roi(raw, roi):
+
+  print(roi)
+  a_srgb = raw.postprocess(use_camera_wb=True, output_color=rawpy.ColorSpace.sRGB, output_bps=8) # RAW -> sRGB
+  a_xyz = raw.postprocess(use_camera_wb=True, output_color=rawpy.ColorSpace.XYZ, output_bps=8) # RAW -> XYZ
+
+  ac_srgb = a_srgb[int(roi['x1']) : int(roi['x2']), int(roi['y1']) : int(roi['y2'])] # new array for selection of image (srgb)
+  ac_xyz = a_xyz[int(roi['x1']) : int(roi['x2']), int(roi['y1']) : int(roi['y2'])] # new array for selection of image (xyz)
+
+  # obtain median values from these arrays (these calls include sorting under the hood)
+  med_srgb = numpy.median(ac_srgb, axis=(0, 1))
+  med_xyz = numpy.median(ac_xyz, axis=(0, 1))
+
+  # Return an RoiOutput
+  srgb_obj = {'r': med_srgb[0], 'g': med_srgb[1], 'b': med_srgb[2]}
+  xyz_obj = {'x': med_xyz[0], 'y': med_xyz[1], 'z': med_xyz[2]}
+  return {'label': roi['index'], 'xyz': xyz_obj, 'srgb': srgb_obj}
 
 
 if __name__ == '__main__':

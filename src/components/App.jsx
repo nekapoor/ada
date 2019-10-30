@@ -70,45 +70,48 @@ class ImageUploader extends React.Component {
       console.log(formData)
 
       axios.post(`${process.env.HOST}/images/roi`, formData)
-        .then((data) => {
-          console.log(data)
+        .then((res) => {
+          console.log('GOT HERE HANDLE BUTTON CLICK')
+          console.log(res)
+          this.setState({ imageData: res.data.data })
+
           // DUMMY DATA UNTIL API IS IMPLEMENTED
-          let dummyData = [{
-            "label": "0",
-            "lab": {
-              "l": "23",
-              "a": "234",
-              "b": "123"
-            },
-            "xyz": {
-              "x": "43",
-              "y": "934",
-              "z": "2309"
-            },
-            "srgb": {
-              "r": "255",
-              "g": "23",
-              "b": "234"
-            }
-          },{
-            "label": "1",
-            "lab": {
-              "l": "123",
-              "a": "334",
-              "b": "423"
-            },
-            "xyz": {
-              "x": "434",
-              "y": "94",
-              "z": "239"
-            },
-            "srgb": {
-              "r": "25",
-              "g": "23",
-              "b": "23"
-            }
-          }]
-          this.setState({ imageData: dummyData })
+          // let dummyData = [{
+          //   "label": "0",
+          //   "lab": {
+          //     "l": "23",
+          //     "a": "234",
+          //     "b": "123"
+          //   },
+          //   "xyz": {
+          //     "x": "43",
+          //     "y": "934",
+          //     "z": "2309"
+          //   },
+          //   "srgb": {
+          //     "r": "255",
+          //     "g": "23",
+          //     "b": "234"
+          //   }
+          // },{
+          //   "label": "1",
+          //   "lab": {
+          //     "l": "123",
+          //     "a": "334",
+          //     "b": "423"
+          //   },
+          //   "xyz": {
+          //     "x": "434",
+          //     "y": "94",
+          //     "z": "239"
+          //   },
+          //   "srgb": {
+          //     "r": "25",
+          //     "g": "23",
+          //     "b": "23"
+          //   }
+          // }]
+          // this.setState({ imageData: dummyData })
 
           console.log(this.state.imageData)
           console.log(this.state.imageData[0].index)
@@ -166,7 +169,7 @@ class ImageUploader extends React.Component {
                 <div {...getRootProps()}>
                   <input {...getInputProps()} />
 
-                  <div className="text-center">Click me to upload a file!</div>
+                  <div className="text-center">Click me to upload a raw image file!</div>
                 </div>
               )}
             </Dropzone>
@@ -187,7 +190,7 @@ class ImageUploader extends React.Component {
                       onChange={this.onChange}
                       regionRenderer={this.regionRenderer}
                     >
-                      <img src={`${process.env.HOST}/static/image_red.jpg`} id='jpg-image' width="100%" />
+                      <img src={`${process.env.HOST}/static/${this.state.image_url}`} id='jpg-image' width="100%" />
                     </RegionSelect>
                   )
             }
@@ -198,9 +201,6 @@ class ImageUploader extends React.Component {
                 <thead>
                   <tr>
                     <th>Label</th>
-                    <th>L</th>
-                    <th>A</th>
-                    <th>B</th>
                     <th>X</th>
                     <th>Y</th>
                     <th>Z</th>
@@ -214,9 +214,6 @@ class ImageUploader extends React.Component {
                   {this.state.imageData && this.state.imageData.map(data => (
                     <tr key={data.label}>
                       <td>{data.label}</td>
-                      <td>{data.lab.l}</td>
-                      <td>{data.lab.a}</td>
-                      <td>{data.lab.b}</td>
                       <td>{data.xyz.x}</td>
                       <td>{data.xyz.y}</td>
                       <td>{data.xyz.z}</td>
