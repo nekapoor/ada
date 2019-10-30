@@ -10,10 +10,6 @@ class ImageUploader extends React.Component {
 
     this.state = {
       regions: [], 
-      width: 0,
-      height: 0,
-      actualHeight: 0,
-      actualWidth: 0,
       imageData: [],
       image_url: ''
     }
@@ -40,16 +36,7 @@ class ImageUploader extends React.Component {
 
           this.setState({
             image_url: res.data
-          }, () => {
-            const rawImage = document.getElementById('jpg-image')
-
-            this.setState({
-              width: rawImage.width,
-              height: rawImage.height,
-              actualWidth: rawImage.naturalWidth,
-              actualHeight: rawImage.naturalHeight,
-            })
-          });
+          }) 
         })
     })
   }
@@ -64,7 +51,7 @@ class ImageUploader extends React.Component {
 
       const formData = {
         rois: rois,
-        url: `${process.env.HOST}/static/image_red.jpg`
+        url: `${process.env.HOST}/static/${this.state.image_url}`
       }
 
       console.log(formData)
@@ -74,45 +61,6 @@ class ImageUploader extends React.Component {
           console.log('GOT HERE HANDLE BUTTON CLICK')
           console.log(res)
           this.setState({ imageData: res.data.data })
-
-          // DUMMY DATA UNTIL API IS IMPLEMENTED
-          // let dummyData = [{
-          //   "label": "0",
-          //   "lab": {
-          //     "l": "23",
-          //     "a": "234",
-          //     "b": "123"
-          //   },
-          //   "xyz": {
-          //     "x": "43",
-          //     "y": "934",
-          //     "z": "2309"
-          //   },
-          //   "srgb": {
-          //     "r": "255",
-          //     "g": "23",
-          //     "b": "234"
-          //   }
-          // },{
-          //   "label": "1",
-          //   "lab": {
-          //     "l": "123",
-          //     "a": "334",
-          //     "b": "423"
-          //   },
-          //   "xyz": {
-          //     "x": "434",
-          //     "y": "94",
-          //     "z": "239"
-          //   },
-          //   "srgb": {
-          //     "r": "25",
-          //     "g": "23",
-          //     "b": "23"
-          //   }
-          // }]
-          // this.setState({ imageData: dummyData })
-
           console.log(this.state.imageData)
           console.log(this.state.imageData[0].index)
         })
@@ -132,7 +80,11 @@ class ImageUploader extends React.Component {
   }
 
   onChange(regions) {
-    const { width, height, actualWidth, actualHeight } = this.state
+    const rawImage = document.getElementById('jpg-image')
+
+    const { width, height } = rawImage
+    const actualWidth = rawImage.naturalWidth
+    const actualHeight = rawImage.naturalHeight
 
     regions.map(region => {
       let data = region.data
