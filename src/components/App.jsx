@@ -170,19 +170,27 @@ class ImageUploader extends React.Component {
                 </div>
               )}
             </Dropzone>
+            <hr />
+
           </div>
         </div>
         <div className="row">
           <div className="col-md-5">
 
-            <RegionSelect
-              maxRegions={100}
-              regions={this.state.regions}
-              onChange={this.onChange}
-              regionRenderer={this.regionRenderer}
-            >
-              {this.state.image_url && <img src={`${process.env.HOST}/static/image_red.jpg`} id='jpg-image' width="100%" />}
-            </RegionSelect>
+
+            { //Check if message failed
+              (this.state.image_url == '')
+                ? <div> Upload a raw file above and we'll convert it to a jpg and render it here </div> 
+                : (<RegionSelect
+                      maxRegions={100}
+                      regions={this.state.regions}
+                      onChange={this.onChange}
+                      regionRenderer={this.regionRenderer}
+                    >
+                      <img src={`${process.env.HOST}/static/image_red.jpg`} id='jpg-image' width="100%" />
+                    </RegionSelect>
+                  )
+            }
           </div>
           <div className="col-md-7">
             <div className="table-responsive">
