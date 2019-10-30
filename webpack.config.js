@@ -95,6 +95,10 @@ const devSettings = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new CleanWebpackPlugin([paths.build]),
+    new webpack.DefinePlugin({ 'process.env': {
+      NODE_ENV: JSON.stringify('development'),
+      HOST: JSON.stringify('http://localhost:5000')
+    }}),
   ]
 }
 
@@ -107,7 +111,8 @@ const prodSettings = {
   },
   plugins: [
     new webpack.DefinePlugin({ 'process.env': {
-      NODE_ENV: JSON.stringify('production')
+      NODE_ENV: JSON.stringify('production'),
+      HOST: JSON.stringify('http://localhost:5000')
     }}),
     new webpack.optimize.UglifyJsPlugin(uglifyConfig),
     new OptimizeCssAssetsPlugin(),

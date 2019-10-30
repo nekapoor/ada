@@ -10,3 +10,4 @@ rawpy
 imageio
 python-dotenv
 flask-cors
+numpy
