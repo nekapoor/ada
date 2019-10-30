@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file, send_from_directory
 from flask_cors import CORS, cross_origin
 from werkzeug.utils import secure_filename
 from PIL import Image
@@ -9,12 +9,18 @@ from werkzeug.datastructures import FileStorage
 from helpers import *
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = 'images/'
+UPLOAD_FOLDER = 'server/static/'
 
 app = Flask(__name__, static_folder='../build')
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
+@app.route("/static/<path:path>")
+def get_public_file(path):
+    full_path = os.path.join('./static/', path)
+    head, tail = os.path.split(full_path)
+    return send_from_directory(head, tail)
 
 @app.route('/')
 def index():
@@ -45,7 +51,7 @@ def upload_file():
       file.save(raw_path)
       
       # upload raw dng to s3
-      upload_file_to_s3_bucket(raw_path, raw_basename, os.environ.get("BUCKET"))
+      #upload_file_to_s3_bucket(raw_path, raw_basename, os.environ.get("BUCKET"))
 
       # read raw image and convert to .jpg and save
       raw_img = rawpy.imread(raw_path)
@@ -55,12 +61,18 @@ def upload_file():
       # upload .jpg file to s3
       img = Image.open(jpg_path)
       jpg_basename = os.path.basename(img.filename) 
-      upload_file_to_s3_bucket(jpg_path, jpg_basename, os.environ.get("BUCKET"))
+      #upload_file_to_s3_bucket(jpg_path, jpg_basename, os.environ.get("BUCKET"))
 
-      return "Successfully uploaded a .dng file and a .jpg file"
+      return jpg_basename
   else:
       print("bad")
       return redirect("/")
+
+@app.route("/images/roi", methods=["POST"])
+@cross_origin()
+def process_image_rois():
+  return "true"
+
 
 if __name__ == '__main__':
     # Threaded option to enable multiple instances for multiple user access support
